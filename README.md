@@ -1,6 +1,11 @@
 # connect4
 A connect 4 REST API
 
+## to run the server:
+* with go installed on your computer in your terminal in the main folder of the repo run `go build`
+* In your terminal and same folder run `connect4.exe`
+* to test the existing functionality, use the Curls and URLs listed below
+
 ## game_table schema:
 ```
 CREATE TABLE game_table (
@@ -51,3 +56,12 @@ drop_token/1
 ```
 drop_token/2
 ```
+### get error for nonexistent game
+```
+drop_token/3
+```
+### get error for bad request
+```
+drop_token/blah
+```
+
