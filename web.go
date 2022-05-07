@@ -1,7 +1,9 @@
 package main
 
 import (
+	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -43,4 +45,21 @@ func createGameWeb(c *gin.Context) {
 		return
 	}
 	c.IndentedJSON(http.StatusOK, gameID)
+}
+
+func getGameStateWeb(c *gin.Context) {
+	id := c.Param("gameId")
+	intId, err := strconv.Atoi(id)
+	gamesDb, err := openGamesDB()
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	log.Println("id:", intId)
+	gameState, err := getGamesState(intId, gamesDb)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	c.IndentedJSON(http.StatusOK, gameState)
 }

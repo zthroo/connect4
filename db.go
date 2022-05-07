@@ -22,16 +22,6 @@ type game struct {
 	Rows       int        `json:"rows"`
 	BoardState [][]string `json:"boardState"`
 	GameState  string     `json:"gameState"`
-}
-
-//have a finished game struct to facilitate the requirement of no winner key if game in progress.
-type finishedGame struct {
-	GameID     string     `json:"gameID"`
-	Players    []string   `json:"players"`
-	Columns    int        `json:"columns"`
-	Rows       int        `json:"rows"`
-	BoardState [][]string `json:"boardState"`
-	GameState  string     `json:"gameState"`
 	Winner     string     `json:"winner"`
 }
 
@@ -98,4 +88,26 @@ func createGame(players []string, columns, rows int, gamesDB *sql.DB) (gameID, e
 	}
 	gameID.GameID = id
 	return gameID, err
+}
+
+func getGamesState(gameID int, gamesDB *sql.DB) (map[string]string, error) {
+	const query = `SELECT 
+						players, 
+						game_state,
+						winner 
+					FROM 
+						game_table 
+					WHERE game_id = ?`
+
+	var players, gameState string
+	var winner sql.NullString
+	err := gamesDB.QueryRow(query, gameID).Scan(&players, &gameState, &winner)
+	if err != nil {
+		return nil, err
+	}
+	if winner.Valid {
+		return map[string]string{"players": players, "state": gameState, "winner": winner.String}, err
+	}
+
+	return map[string]string{"players": players, "state": gameState}, err
 }
