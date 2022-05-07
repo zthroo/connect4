@@ -50,6 +50,10 @@ func createGameWeb(c *gin.Context) {
 func getGameStateWeb(c *gin.Context) {
 	id := c.Param("gameId")
 	intId, err := strconv.Atoi(id)
+	if err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
 	gamesDb, err := openGamesDB()
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
